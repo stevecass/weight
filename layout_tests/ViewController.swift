@@ -10,6 +10,13 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    @IBOutlet var textField: UITextField!
+
+    @IBAction func buttonTapped(sender : AnyObject) {
+        println("I got tapped")
+        println(textField.text)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.

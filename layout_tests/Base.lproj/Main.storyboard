@@ -38,9 +38,13 @@
                                 <state key="normal" title="Button">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="buttonTapped:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="6h3-L0-xBO"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="2Vq-vf-MgS" firstAttribute="top" secondItem="uEE-YW-HqX" secondAttribute="bottom" constant="57" id="4hb-su-pmd"/>
                             <constraint firstItem="2Vq-vf-MgS" firstAttribute="centerX" secondItem="1bS-vQ-ahT" secondAttribute="centerX" id="89c-JR-38h"/>
@@ -50,9 +54,17 @@
                             <constraint firstItem="2Vq-vf-MgS" firstAttribute="centerX" secondItem="Rou-0R-uVs" secondAttribute="centerX" id="oiY-X4-QAV"/>
                             <constraint firstItem="Rou-0R-uVs" firstAttribute="centerX" secondItem="2Vq-vf-MgS" secondAttribute="centerX" id="vqn-9F-6Ug"/>
                         </constraints>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="kge-Gh-nye" appends="YES" id="hYu-Yq-VGb"/>
+                            <outletCollection property="gestureRecognizers" destination="kge-Gh-nye" appends="YES" id="gPc-0Z-2gK"/>
+                        </connections>
                     </view>
+                    <connections>
+                        <outlet property="textField" destination="Rou-0R-uVs" id="GBh-FS-tgQ"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="kge-Gh-nye"/>
             </objects>
         </scene>
     </scenes>
