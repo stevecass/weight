@@ -15,6 +15,11 @@ class ViewController: UIViewController {
     @IBAction func buttonTapped(sender : AnyObject) {
         println("I got tapped")
         println(textField.text)
+
+    }
+    @IBAction func viewTapped(sender : AnyObject) {
+        println("resign")
+        textField.resignFirstResponder()
     }
 
     override func viewDidLoad() {
