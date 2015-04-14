@@ -41,10 +41,12 @@ class ViewController: UIViewController {
 
     func keyboardWasShown(notification: NSNotification) {
         println("Keyboard shown")
+        self.view.frame.origin.y -= 150
     }
 
     func keyboardWasHidden(notification: NSNotification) {
         println("Keyboard hidden")
+        self.view.frame.origin.y += 150
     }
 
     override func didReceiveMemoryWarning() {
