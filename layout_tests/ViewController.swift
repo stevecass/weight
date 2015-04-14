@@ -23,6 +23,7 @@ class ViewController: UIViewController {
         NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue.mainQueue()) {
             (response, data, error) in
             println(NSString(data: data, encoding: NSUTF8StringEncoding))
+            self.textField.text = "";
         }
 
     }
@@ -34,6 +35,16 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWasShown:"), name:UIKeyboardWillShowNotification, object: nil);
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWasHidden:"), name:UIKeyboardWillHideNotification, object: nil);
+    }
+
+    func keyboardWasShown(notification: NSNotification) {
+        println("Keyboard shown")
+    }
+
+    func keyboardWasHidden(notification: NSNotification) {
+        println("Keyboard hidden")
     }
 
     override func didReceiveMemoryWarning() {
