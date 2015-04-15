@@ -16,7 +16,7 @@ class ViewController: UIViewController {
     /* Feel like there must be a shorter / built-in way to do this */
     func getIsoDateStringFromPicker() -> String {
         let formatter = NSDateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z"
+        formatter.dateFormat = "yyyy-MM-dd"
         formatter.timeZone = NSTimeZone(forSecondsFromGMT: 0)
         formatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
         return formatter.stringFromDate(datePicker.date)
