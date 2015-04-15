@@ -13,7 +13,9 @@ class ViewController: UIViewController {
     @IBOutlet var textField: UITextField!
     @IBOutlet weak var datePicker: UIDatePicker!
 
-    /* Feel like there must be a shorter / built-in way to do this */
+    let globalServerUrl = (NSURL(string: "http://localhost:4567/weight"))!
+
+    /* No shorter / built-in way to do this? */
     func getIsoDateStringFromPicker() -> String {
         let formatter = NSDateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
@@ -25,8 +27,7 @@ class ViewController: UIViewController {
     @IBAction func buttonTapped(sender : AnyObject) {
         println("I got tapped")
         println(textField.text)
-        let url = NSURL(string: "http://localhost:4567/weight")
-        var request:NSMutableURLRequest = NSMutableURLRequest(URL:url!)
+        var request:NSMutableURLRequest = NSMutableURLRequest(URL:globalServerUrl)
         request.HTTPMethod = "POST"
         let dateString = datePicker.date
         var bodyData = "wgt=\(textField.text)"
@@ -37,11 +38,20 @@ class ViewController: UIViewController {
             println(NSString(data: data, encoding: NSUTF8StringEncoding))
             self.textField.text = "";
         }
-
     }
+
     @IBAction func viewTapped(sender : AnyObject) {
         println("resign")
         textField.resignFirstResponder()
+    }
+
+    func loadWeightHistory() {
+        var request:NSMutableURLRequest = NSMutableURLRequest(URL:globalServerUrl)
+        request.HTTPMethod = "GET"
+        NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue.mainQueue()) {
+            (response, data, error) in
+            println(NSString(data: data, encoding: NSUTF8StringEncoding))
+        }
     }
 
     override func viewDidLoad() {
@@ -49,6 +59,8 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWasShown:"), name:UIKeyboardWillShowNotification, object: nil);
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWasHidden:"), name:UIKeyboardWillHideNotification, object: nil);
+        loadWeightHistory()
+    
     }
 
     func keyboardWasShown(notification: NSNotification) {
