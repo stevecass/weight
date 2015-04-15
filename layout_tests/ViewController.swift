@@ -8,12 +8,27 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource  {
 
     @IBOutlet var textField: UITextField!
     @IBOutlet weak var datePicker: UIDatePicker!
-
+    @IBOutlet weak var tableView: UITableView!
     let globalServerUrl = (NSURL(string: "http://localhost:4567/weight"))!
+    /* Table protocol stuff - should this be elsewhere? */
+
+    private var weightHistory = [WeighIn]();
+
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return weightHistory.count
+    }
+
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        return UITableViewCell()
+    }
+
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        // do nothing for now
+    }
 
     /* No shorter / built-in way to do this? */
     func getIsoDateStringFromPicker() -> String {
@@ -51,6 +66,12 @@ class ViewController: UIViewController {
         NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue.mainQueue()) {
             (response, data, error) in
             println(NSString(data: data, encoding: NSUTF8StringEncoding))
+            var jsonObject: AnyObject? = NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.allZeros, error: nil)
+            var map = jsonObject as NSDictionary
+            map.enumerateKeysAndObjectsUsingBlock { (key, object, stop) -> Void in
+                println(key);
+                println(object);
+            }
         }
     }
 

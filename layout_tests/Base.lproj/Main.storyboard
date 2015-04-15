@@ -65,6 +65,7 @@
                     </view>
                     <connections>
                         <outlet property="datePicker" destination="uEE-YW-HqX" id="3Oz-Y6-MnY"/>
+                        <outlet property="tableView" destination="3e7-EW-1BQ" id="24p-2U-9UP"/>
                         <outlet property="textField" destination="Rou-0R-uVs" id="GBh-FS-tgQ"/>
                     </connections>
                 </viewController>
