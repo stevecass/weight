@@ -87,7 +87,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         */
         self.weightHistory = self.weightHistory.sorted{
             $0.date.compare($1.date) == NSComparisonResult.OrderedAscending
-        }
+        }.reverse()
 
     }
 
