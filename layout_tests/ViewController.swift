@@ -23,14 +23,22 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell:UITableViewCell = self.tableView.dequeueReusableCellWithIdentifier("cell") as UITableViewCell
+        let reuseIdentifier = "cell"
+        var cell:UITableViewCell? = self.tableView.dequeueReusableCellWithIdentifier(reuseIdentifier) as? UITableViewCell
+        if(cell == nil) {
+            cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: reuseIdentifier)
+        }
+        println(cell!.detailTextLabel)
+        println(cell!.textLabel)
+        println()
 
         let wi = self.weightHistory[indexPath.row]
         let formatter = NSDateFormatter()
         formatter.dateFormat = "dd-MMM-yyyy"
-        cell.textLabel?.text = formatter.stringFromDate(wi.date)
-        println(cell.textLabel!)
-        return cell
+        cell!.textLabel?.text = formatter.stringFromDate(wi.date)
+        cell!.detailTextLabel?.text = String(format: "%.1f", wi.weight)
+        println(cell!.textLabel!)
+        return cell!
     }
 
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
@@ -100,7 +108,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // Do any additional setup after loading the view, typically from a nib.
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWasShown:"), name:UIKeyboardWillShowNotification, object: nil);
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWasHidden:"), name:UIKeyboardWillHideNotification, object: nil);
-        self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
         loadWeightHistory()
     }
 
