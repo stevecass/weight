@@ -69,8 +69,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             var jsonObject: AnyObject? = NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.allZeros, error: nil)
             var map = jsonObject as NSDictionary
             map.enumerateKeysAndObjectsUsingBlock { (key, object, stop) -> Void in
-                println(key);
-                println(object);
+                let w = WeighIn(dstr:key as String, w:object as Double)
+                self.weightHistory.append(w)
             }
         }
     }

@@ -10,10 +10,10 @@ import Foundation
 struct WeighIn {
     var date: NSDate
     var weight: Double
-    init(dstr:String, w:String) {
+    init(dstr:String, w:Double) {
         let formatter = NSDateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         date = formatter.dateFromString(dstr)!
-        weight = (w as NSString).doubleValue
+        weight = w
     }
 }
