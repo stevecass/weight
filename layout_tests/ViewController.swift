@@ -23,7 +23,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        return UITableViewCell()
+        var cell:UITableViewCell = self.tableView.dequeueReusableCellWithIdentifier("cell") as UITableViewCell
+
+        let wi = self.weightHistory[indexPath.row]
+        let formatter = NSDateFormatter()
+        formatter.dateFormat = "dd-MMM-yyyy"
+        cell.textLabel?.text = formatter.stringFromDate(wi.date)
+        println(cell.textLabel!)
+        return cell
     }
 
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
@@ -60,6 +67,22 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         textField.resignFirstResponder()
     }
 
+    func makeArrayFromServerData(map : NSDictionary) {
+        map.enumerateKeysAndObjectsUsingBlock { (key, object, stop) -> Void in
+            let w = WeighIn(dstr:key as String, w:object as Double)
+            self.weightHistory.append(w)
+        }
+
+        /*
+          Now sort the array. In real life we'd probably just have the server return the
+          results ordered (if under our control.)
+        */
+        self.weightHistory = self.weightHistory.sorted{
+            $0.date.compare($1.date) == NSComparisonResult.OrderedAscending
+        }
+
+    }
+
     func loadWeightHistory() {
         var request:NSMutableURLRequest = NSMutableURLRequest(URL:globalServerUrl)
         request.HTTPMethod = "GET"
@@ -67,11 +90,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             (response, data, error) in
             println(NSString(data: data, encoding: NSUTF8StringEncoding))
             var jsonObject: AnyObject? = NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.allZeros, error: nil)
-            var map = jsonObject as NSDictionary
-            map.enumerateKeysAndObjectsUsingBlock { (key, object, stop) -> Void in
-                let w = WeighIn(dstr:key as String, w:object as Double)
-                self.weightHistory.append(w)
-            }
+            self.makeArrayFromServerData(jsonObject as NSDictionary)
+            self.tableView.reloadData()
         }
     }
 
@@ -80,8 +100,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // Do any additional setup after loading the view, typically from a nib.
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWasShown:"), name:UIKeyboardWillShowNotification, object: nil);
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWasHidden:"), name:UIKeyboardWillHideNotification, object: nil);
+        self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
         loadWeightHistory()
-    
     }
 
     func keyboardWasShown(notification: NSNotification) {
