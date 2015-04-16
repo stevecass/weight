@@ -13,7 +13,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet var textField: UITextField!
     @IBOutlet weak var datePicker: UIDatePicker!
     @IBOutlet weak var tableView: UITableView!
-    let globalServerUrl = (NSURL(string: "http://localhost:4567/weight"))!
+    let globalServerUrl = (NSURL(string: "http://localhost:3000/weights"))!
     /* Table protocol stuff - should this be elsewhere? */
 
     private var weightHistory = [WeighIn]();
@@ -75,9 +75,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         textField.resignFirstResponder()
     }
 
-    func makeArrayFromServerData(map : NSDictionary) {
-        map.enumerateKeysAndObjectsUsingBlock { (key, object, stop) -> Void in
-            let w = WeighIn(dstr:key as String, w:object as Double)
+    func makeArrayFromServerData(arr : NSArray) {
+        arr.enumerateObjectsUsingBlock{ (obj, i, stop) -> Void in
+            let ent = obj as NSDictionary
+            let dstr  = ent["taken_on"] as? NSString
+            let wstr = (ent["weight"] as? NSString)
+            let wgt = wstr!.doubleValue
+
+            let w = WeighIn(dstr:dstr as String, w:wgt as Double)
             self.weightHistory.append(w)
         }
 
@@ -98,7 +103,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             (response, data, error) in
             println(NSString(data: data, encoding: NSUTF8StringEncoding))
             var jsonObject: AnyObject? = NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.allZeros, error: nil)
-            self.makeArrayFromServerData(jsonObject as NSDictionary)
+            self.makeArrayFromServerData(jsonObject as NSArray)
             self.tableView.reloadData()
         }
     }
