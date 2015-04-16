@@ -28,10 +28,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         if(cell == nil) {
             cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: reuseIdentifier)
         }
-        println(cell!.detailTextLabel)
-        println(cell!.textLabel)
-        println()
-
         let wi = self.weightHistory[indexPath.row]
         let formatter = NSDateFormatter()
         formatter.dateFormat = "dd-MMM-yyyy"
@@ -53,36 +49,60 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         formatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
         return formatter.stringFromDate(datePicker.date)
     }
+    
+    private func recordWeight() {
+        var request:NSMutableURLRequest = NSMutableURLRequest(URL:globalServerUrl)
+        request.HTTPMethod = "POST"
+        let dateString = datePicker.date
+        var bodyData = "weight=\(textField.text)"
+        bodyData += ("&taken_on=" + getIsoDateStringFromPicker())
+        request.HTTPBody = bodyData.dataUsingEncoding(NSUTF8StringEncoding);
+        NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue.mainQueue()) {
+            (response, data, error) in
+            if let httpResponse = response as? NSHTTPURLResponse {
+                if httpResponse.statusCode == 201 {
+                    println("All is well")
+                    println(NSString(data: data, encoding: NSUTF8StringEncoding))
+                    var jsonObject: AnyObject? = NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.allZeros, error: nil)
+                    let w = self.weighInFromJsonSnippet(jsonObject as NSDictionary)
+                    self.weightHistory.insert(w, atIndex: 0)
+                    self.textField.text = "";
+                    self.tableView.reloadData()
+                } else {
+                    var alert = UIAlertController(title: "Alert", message: "Saving the weight failed", preferredStyle: UIAlertControllerStyle.Alert)
+                    alert.addAction(UIAlertAction(title: "Click", style: UIAlertActionStyle.Default, handler: nil))
+                    self.presentViewController(alert, animated: true, completion: nil)
+                }
+
+            } else {
+                
+            }
+        }
+    }
 
     @IBAction func buttonTapped(sender : AnyObject) {
         println("I got tapped")
         println(textField.text)
-        var request:NSMutableURLRequest = NSMutableURLRequest(URL:globalServerUrl)
-        request.HTTPMethod = "POST"
-        let dateString = datePicker.date
-        var bodyData = "wgt=\(textField.text)"
-        bodyData += ("&dt=" + getIsoDateStringFromPicker())
-        request.HTTPBody = bodyData.dataUsingEncoding(NSUTF8StringEncoding);
-        NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue.mainQueue()) {
-            (response, data, error) in
-            println(NSString(data: data, encoding: NSUTF8StringEncoding))
-            self.textField.text = "";
-        }
+        recordWeight()
     }
 
     @IBAction func viewTapped(sender : AnyObject) {
         println("resign")
         textField.resignFirstResponder()
     }
+    
+    func weighInFromJsonSnippet(ent: NSDictionary) -> WeighIn {
+        let dstr  = ent["taken_on"] as? NSString
+        let wstr = (ent["weight"] as? NSString)
+        let wgt = wstr!.doubleValue
+        return WeighIn(dstr:dstr as String, w:wgt as Double)
+        
+    }
 
     func makeArrayFromServerData(arr : NSArray) {
         arr.enumerateObjectsUsingBlock{ (obj, i, stop) -> Void in
             let ent = obj as NSDictionary
-            let dstr  = ent["taken_on"] as? NSString
-            let wstr = (ent["weight"] as? NSString)
-            let wgt = wstr!.doubleValue
-
-            let w = WeighIn(dstr:dstr as String, w:wgt as Double)
+            let w = self.weighInFromJsonSnippet(ent)
             self.weightHistory.append(w)
         }
 
